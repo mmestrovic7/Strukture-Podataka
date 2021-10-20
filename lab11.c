@@ -19,6 +19,7 @@ int BrojRedaka(char* nazivDatoteke)
 		printf("Greska kod otvaranja datoteke!");
 		return -1;
 	}
+
 	while (!feof(dat))
 	{
 		fgets(buffer, MAX_LINE, dat);
@@ -30,8 +31,19 @@ int BrojRedaka(char* nazivDatoteke)
 }
 int main()
 {
-    int br=0;
+   int br=0,i=0;
+    FILE* dat;
+    _student* studenti=NULL;
+    dat=fopen("studenti.txt","r");
     br=BrojRedaka("studenti.txt")-1;
+    studenti=(_student*)malloc(br*sizeof(_student));
+
+    for(i=0;i<br;i++)
+        fscanf(dat,"%s %s %lf",studenti[i].ime,studenti[i].prezime,&studenti[i].bodovi);
+    for(i=0;i<br;i++)
+        printf("%s %s %lf \n",studenti[i].ime,studenti[i].prezime,studenti[i].bodovi);
+    fclose(dat);
 
 
+    return 0;
 }
