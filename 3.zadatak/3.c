@@ -25,6 +25,8 @@ int AppendList(Position head, char* name, char* surname, int birthYear);
 Position FindPerson(Position first, char* surname);
 int DeletePerson(Position head, char* surname);
 int AddAfter(Position p, char* name, char* surname, int birthYear);
+Position FindBefore(Position head,char* surname);
+int AddBefore(Position head, char* name, char* surname, int birthYear);
 
 int main(int argc, char** argv)
 {
@@ -50,9 +52,13 @@ void Menu(Position p)
     do
     {
         printf("Unosom broja odaberite zelite li:\n1. Dodati novi element na pocetak liste\n"
-               "2. Ispisati listu\n3. Dodati novi element na kraj liste\n"
-               "4. Pronaci element u listi (po prezimenu)\n5. Izbrisati odredeni element iz liste(po prezimenu)\n"
-               "6. Dodati novi element iza odredenog elementa(birate iza kojeg unosom prezimena)\n0. Izaci iz programa\n");
+               "2. Ispisati listu\n"
+               "3. Dodati novi element na kraj liste\n"
+               "4. Pronaci element u listi (po prezimenu)\n"
+               "5. Izbrisati odredeni element iz liste(po prezimenu)\n"
+               "6. Dodati novi element iza odredenog elementa(birate iza kojeg unosom prezimena)\n"
+               "7. Dodati novi element ispred odredenog elementa(birate iza kojeg unosom prezimena)\n"
+               "0. Izaci iz programa\n");
         scanf(" %c", &option);
 
         switch (option)
@@ -117,6 +123,10 @@ void Menu(Position p)
         case '6':
             InputInfo(name, surname, &birthYear);
             AddAfter(p, name, surname, birthYear);
+            break;
+        case '7':
+            InputInfo(name, surname, &birthYear);
+            AddBefore(p, name, surname, birthYear);
             break;
 
 
@@ -285,7 +295,7 @@ int AddAfter(Position head, char* name, char* surname, int birthYear)
         printf("Neuspjela dinamicka alokacija");
         return -1;
     }
-     if (head->next==NULL)
+    if (head->next==NULL)
     {
         printf("Prazna lista\n");
         return -1;
@@ -294,6 +304,52 @@ int AddAfter(Position head, char* name, char* surname, int birthYear)
     printf("Unesite prezime: ");
     scanf(" %s", surnameInput);
     searchPosition=FindPerson(head->next, surnameInput);
+
+
+    InsertAfter(searchPosition, newPerson);
+
+    return EXIT_SUCCESS;
+}
+Position FindBefore(Position head,char* surname)
+{
+    Position temp=head,searchPosition=NULL;
+    if(temp->next==NULL)
+    {
+        printf("Prazna lista\n");
+        return NULL;
+    }
+    if(temp->next->next==NULL)
+        if(strcmp(temp->next->surname,surname)==0)
+            return temp;
+        else
+            return NULL;
+    while(temp->next->next)
+    {
+        if(strcmp(temp->next->next->surname,surname)==0)
+            return temp->next;
+        temp=temp->next;
+
+    }
+    return NULL;
+
+
+}
+int AddBefore(Position head, char* name, char* surname, int birthYear)
+{
+    Position newPerson=NULL,searchPosition=NULL;
+    char surnameInput[MAX_SIZE]="";
+
+    newPerson=CreatePerson(name, surname, birthYear);
+    if (!newPerson)
+    {
+        printf("Neuspjela dinamicka alokacija");
+        return -1;
+    }
+
+
+    printf("Unesite prezime: ");
+    scanf(" %s", surnameInput);
+    searchPosition=FindBefore(head, surnameInput);
 
 
     InsertAfter(searchPosition, newPerson);
