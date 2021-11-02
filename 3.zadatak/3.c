@@ -27,6 +27,7 @@ int DeletePerson(Position head, char* surname);
 int AddAfter(Position p, char* name, char* surname, int birthYear);
 Position FindBefore(Position head,char* surname);
 int AddBefore(Position head, char* name, char* surname, int birthYear);
+int Sort(Position head);
 
 int main(int argc, char** argv)
 {
@@ -58,6 +59,7 @@ void Menu(Position p)
                "5. Izbrisati odredeni element iz liste(po prezimenu)\n"
                "6. Dodati novi element iza odredenog elementa(birate iza kojeg unosom prezimena)\n"
                "7. Dodati novi element ispred odredenog elementa(birate iza kojeg unosom prezimena)\n"
+               "8. Sortirati listu\n"
                "0. Izaci iz programa\n");
         scanf(" %c", &option);
 
@@ -128,6 +130,8 @@ void Menu(Position p)
             InputInfo(name, surname, &birthYear);
             AddBefore(p, name, surname, birthYear);
             break;
+        case '8':
+            Sort(p);
 
 
         case '0':
@@ -355,4 +359,33 @@ int AddBefore(Position head, char* name, char* surname, int birthYear)
     InsertAfter(searchPosition, newPerson);
 
     return EXIT_SUCCESS;
+}
+int Sort(Position head)
+{
+    Position p=head;
+	Position q=NULL;
+	Position beforeQ=NULL;
+	Position last=NULL;
+
+	while (p->next!= last)
+	{
+		beforeQ=p;
+		q=beforeQ->next;
+
+		while (q->next!=last)
+		{
+			if (strcmp(q->surname,q->next->surname)>0)
+			{
+				beforeQ->next=q->next;
+				q->next=q->next->next;
+				beforeQ->next->next=q;
+				q=beforeQ->next;
+			}
+			beforeQ=q;
+			q=q->next;
+		}
+		last=q;
+	}
+
+	return 0;
 }
