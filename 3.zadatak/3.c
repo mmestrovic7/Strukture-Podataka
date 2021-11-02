@@ -28,6 +28,7 @@ int AddAfter(Position p, char* name, char* surname, int birthYear);
 Position FindBefore(Position head,char* surname);
 int AddBefore(Position head, char* name, char* surname, int birthYear);
 int Sort(Position head);
+int PrintListToFile(Position p, char* file);
 
 int main(int argc, char** argv)
 {
@@ -132,8 +133,9 @@ void Menu(Position p)
             break;
         case '8':
             Sort(p);
-
-
+         case '9':
+            PrintListToFile(p->next, "file.txt");
+            break;
         case '0':
             break;
         default:
@@ -388,4 +390,27 @@ int Sort(Position head)
 	}
 
 	return 0;
+}
+int PrintListToFile(Position p, char* file)
+{
+    Position temp=p;
+    FILE* f=NULL;
+
+    f=fopen(file, "w");
+    if(!f)
+    {
+        printf("Greska kod otvaranja datoteke!");
+        return -1;
+    }
+
+    while(temp)
+    {
+        fprintf(f, "%s %s %d\n", temp->name, temp->surname, temp->birthYear);
+
+        temp=temp->next;
+    }
+
+    fclose(f);
+
+    return EXIT_SUCCESS;
 }
