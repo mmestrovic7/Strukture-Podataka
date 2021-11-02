@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_SIZE (50)
+#define MAX_SIZE 50
+#define MAX_LINE 1024
 
 struct _Person;
 typedef struct _Person* Position;
@@ -29,6 +30,7 @@ Position FindBefore(Position head,char* surname);
 int AddBefore(Position head, char* name, char* surname, int birthYear);
 int Sort(Position head);
 int PrintListToFile(Position p, char* file);
+int ReadListFromFile(Position head, char* file, char* name, char* surname, int* birthYear);
 
 int main(int argc, char** argv)
 {
@@ -43,7 +45,7 @@ int main(int argc, char** argv)
 
 void Menu(Position p)
 {
-    char option='0';
+    char option='X';
     int error=0;
     char* name=(char*)malloc(MAX_SIZE*sizeof(char));
     char* surname=(char*)malloc(MAX_SIZE*sizeof(char));
@@ -53,21 +55,22 @@ void Menu(Position p)
 
     do
     {
-        printf("Unosom broja odaberite zelite li:\n1. Dodati novi element na pocetak liste\n"
-               "2. Ispisati listu\n"
-               "3. Dodati novi element na kraj liste\n"
-               "4. Pronaci element u listi (po prezimenu)\n"
-               "5. Izbrisati odredeni element iz liste(po prezimenu)\n"
-               "6. Dodati novi element iza odredenog elementa(birate iza kojeg unosom prezimena)\n"
-               "7. Dodati novi element ispred odredenog elementa(birate iza kojeg unosom prezimena)\n"
-               "8. Sortirati listu\n"
-               "9. Upisati listu u file\n"
-               "0. Izaci iz programa\n");
+        printf("Unosom slova odaberite zelite li:\nA) Dodati novi element na pocetak liste\n"
+               "B) Ispisati listu\n"
+               "C) Dodati novi element na kraj liste\n"
+               "D) Pronaci element u listi (po prezimenu)\n"
+               "E) Izbrisati odredeni element iz liste(po prezimenu)\n"
+               "F) Dodati novi element iza odredenog elementa(birate iza kojeg unosom prezimena)\n"
+               "G) Dodati novi element ispred odredenog elementa(birate iza kojeg unosom prezimena)\n"
+               "H) Sortirati listu\n"
+               "I) Upisati listu u file\n"
+               "X) Izaci iz programa\n");
         scanf(" %c", &option);
+        option=toupper(option);
 
         switch (option)
         {
-        case '1':
+        case 'A':
             InputInfo(name, surname, &birthYear);
             error= PrependList(p, name, surname, birthYear);
             if (error== -1)
@@ -83,11 +86,11 @@ void Menu(Position p)
             }
             break;
 
-        case '2':
+        case 'B':
             PrintList(p->next);
             break;
 
-        case '3':
+        case 'C':
             InputInfo(name, surname, &birthYear);
             error= AppendList(p, name, surname, birthYear);
             if (error== -1)
@@ -114,7 +117,7 @@ void Menu(Position p)
 
             break;
 
-        case '5':
+        case 'D':
             if (p->next==NULL)
             {
                 printf("Prazna lista\n");
@@ -124,20 +127,24 @@ void Menu(Position p)
             scanf(" %s", surnameInput);
             DeletePerson(p, surnameInput);
             break;
-        case '6':
+        case 'E':
             InputInfo(name, surname, &birthYear);
             AddAfter(p, name, surname, birthYear);
             break;
-        case '7':
+        case 'F':
             InputInfo(name, surname, &birthYear);
             AddBefore(p, name, surname, birthYear);
             break;
-        case '8':
+        case 'G':
             Sort(p);
-         case '9':
+            break;
+        case 'H':
             PrintListToFile(p->next, "file.txt");
             break;
-        case '0':
+        case 'I':
+            ReadListFromFile(p, "file.txt", name, surname, &birthYear);
+            break;
+        case 'X':
             break;
         default:
             printf("Krivi unos\n");
@@ -145,7 +152,7 @@ void Menu(Position p)
 
         }
     }
-    while(option != '0');
+    while(option != 'X');
 
 }
 
@@ -366,31 +373,31 @@ int AddBefore(Position head, char* name, char* surname, int birthYear)
 int Sort(Position head)
 {
     Position p=head;
-	Position q=NULL;
-	Position beforeQ=NULL;
-	Position last=NULL;
+    Position q=NULL;
+    Position beforeQ=NULL;
+    Position last=NULL;
 
-	while (p->next!= last)
-	{
-		beforeQ=p;
-		q=beforeQ->next;
+    while (p->next!= last)
+    {
+        beforeQ=p;
+        q=beforeQ->next;
 
-		while (q->next!=last)
-		{
-			if (strcmp(q->surname,q->next->surname)>0)
-			{
-				beforeQ->next=q->next;
-				q->next=q->next->next;
-				beforeQ->next->next=q;
-				q=beforeQ->next;
-			}
-			beforeQ=q;
-			q=q->next;
-		}
-		last=q;
-	}
+        while (q->next!=last)
+        {
+            if (strcmp(q->surname,q->next->surname)>0)
+            {
+                beforeQ->next=q->next;
+                q->next=q->next->next;
+                beforeQ->next->next=q;
+                q=beforeQ->next;
+            }
+            beforeQ=q;
+            q=q->next;
+        }
+        last=q;
+    }
 
-	return 0;
+    return 0;
 }
 int PrintListToFile(Position p, char* file)
 {
@@ -410,6 +417,35 @@ int PrintListToFile(Position p, char* file)
 
         temp=temp->next;
     }
+
+    fclose(f);
+
+    return EXIT_SUCCESS;
+}
+int ReadListFromFile(Position head, char* file, char* name, char* surname, int* birthYear)
+{
+    Position temp=head;
+    FILE* f=NULL;
+    char buffer[MAX_LINE]= { 0 };
+    Position newPerson=NULL;
+
+    f=fopen(file, "r");
+
+    if(!feof(f))
+    {
+        return -1;
+    }
+
+    do
+    {
+        fgets(buffer, MAX_LINE, f);
+        if (sscanf(buffer, "%s %s %d", name, surname, birthYear) == 3)
+        {
+            newPerson=CreatePerson(name, surname, *birthYear);
+            InsertAfter(head, newPerson);
+        }
+    }
+    while(!feof(f));
 
     fclose(f);
 
