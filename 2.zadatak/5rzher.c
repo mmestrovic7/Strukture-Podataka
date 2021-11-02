@@ -14,26 +14,23 @@ typedef struct _Person
     Position next;
 } Person;
 
-int PrependList(Position head);
+int PrependList(Position head,char *name,char *surname,int *birthYear);
 int PrintList(Position first);
-Position InputAndCreatePerson();
+void InputPersonInfo(char *name,char *surname,int *birthYear);
+Position CreatePerson(char *name,char *surname,int birthYear);
 int InsertAfter(Position position, Position newPerson);
 Position FindLast(Position head);
-int AppendList(Position head);
+int AppendList(Position head,char *name,char *surname,int *birthYear);
 Position FindPerson(Position first, char* surname);
 void Menu(Position p);
 void DeletePerson(Position head, char* surname);
 
 int main(int argc, char** argv)
 {
+    Person head = { .next = NULL, .name = {0}, .surname = {0}, .birthYear = 0 };
 
-      Person head = { .next=NULL, .name={0}, .surname={0}, .birthYear=0 };
-      Position p = &head;
-      Menu(p);
-
-
-
-    return EXIT_SUCCESS;
+    Position p = &head;
+    Menu(p);
 
 
 
@@ -41,9 +38,12 @@ int main(int argc, char** argv)
 }
 void Menu(Position p)
 {
-    char choice='1';
+    char choice='0';
     int error=0;
     char search[MAX_SIZE] = "";
+    char* name = (char*)malloc(MAX_SIZE*sizeof(char));
+    char* surname = (char*)malloc(MAX_SIZE*sizeof(char));
+    int birthYear = 0;
     Position searchPosition = NULL;
 
     do
@@ -55,17 +55,17 @@ void Menu(Position p)
                "4. Pronaci element u listi (po prezimenu)\n"
                "5. Izbrisati odredeni element iz liste(po prezimenu)\n"
                "0. Izaci iz programa\n");
-        scanf(" %c",&choice);
+        scanf(" %c", &choice);
 
         switch (choice)
         {
         case '1':
-            error = PrependList(p);
+            InputPersonInfo(name,surname, &birthYear);
+            error = PrependList(p,name,surname,birthYear);
             if (error == -1)
                 printf("Neuspjesno dodavanje osobe!\n");
             else
                 printf("Uspjesno ste dodali osobu!\n");
-
             break;
 
         case '2':
@@ -74,11 +74,13 @@ void Menu(Position p)
                 printf("U listi nema ljudi\n");
                 break;
             }
+
             PrintList(p->next);
             break;
 
         case '3':
-            error = AppendList(p);
+            InputPersonInfo(name,surname,&birthYear);
+            error = AppendList(p,name,surname,birthYear);
             if (error == -1)
 
                 printf("Neuspjesno dodavanje osobe");
@@ -122,16 +124,18 @@ void Menu(Position p)
             break;
 
         }
-    }while(choice!='0');
+    }
+    while(choice!='0');
 
 
 }
 
-int PrependList(Position head)
+int PrependList(Position head,char *name,char *surname,int *birthYear)
 {
     Position newPerson = NULL;
 
-    newPerson = InputAndCreatePerson();
+    newPerson = CreatePerson(name,surname,birthYear);
+
     if (!newPerson)
     {
 
@@ -139,7 +143,6 @@ int PrependList(Position head)
     }
 
     InsertAfter(head, newPerson);
-
 
     return EXIT_SUCCESS;
 }
@@ -156,13 +159,20 @@ int PrintList(Position first)
 
     return EXIT_SUCCESS;
 }
+void InputPersonInfo(char *name,char *surname,int *birthYear)
+{
+     printf("Unesite ime: ");
+    scanf(" %s", name);
+    printf("Unesite prezime: ");
+    scanf(" %s", surname);
+    printf("Unesite godinu rodenja: ");
+    scanf(" %d", birthYear);
+}
 
-Position InputAndCreatePerson()
+Position CreatePerson(char *name,char *surname,int birthYear)
 {
     Position newPerson = NULL;
-    char* name = (char*)malloc(MAX_SIZE*sizeof(char));
-    char* surname = (char*)malloc(MAX_SIZE*sizeof(char));
-    int birthYear = 0;
+
 
     newPerson = (Position*)malloc(sizeof(Position));
     if (!newPerson)
@@ -170,19 +180,12 @@ Position InputAndCreatePerson()
         perror("Can't allocate memory!\n");
         return NULL;
     }
-    printf("Unesite ime: ");
-    scanf(" %s", name);
-    printf("Unesite prezime: ");
-    scanf(" %s", surname);
-    printf("Unesite godinu rodenja: ");
-    scanf(" %d", &birthYear);
+
 
     strcpy(newPerson->name, name);
     strcpy(newPerson->surname, surname);
     newPerson->birthYear=birthYear;
     newPerson->next=NULL;
-
-
 
     return newPerson;
 }
@@ -207,12 +210,12 @@ Position FindLast(Position head)
     return temp;
 }
 
-int AppendList(Position head)
+int AppendList(Position head,char *name,char *surname,int *birthYear)
 {
     Position newPerson = NULL;
     Position last = NULL;
 
-    newPerson = InputAndCreatePerson();
+    newPerson = CreatePerson(name,surname,birthYear);
     if (!newPerson)
     {
         return -1;
