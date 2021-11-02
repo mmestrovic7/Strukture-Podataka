@@ -61,6 +61,7 @@ void Menu(Position p)
                "6. Dodati novi element iza odredenog elementa(birate iza kojeg unosom prezimena)\n"
                "7. Dodati novi element ispred odredenog elementa(birate iza kojeg unosom prezimena)\n"
                "8. Sortirati listu\n"
+               "9. Upisati listu u file\n"
                "0. Izaci iz programa\n");
         scanf(" %c", &option);
 
