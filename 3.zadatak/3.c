@@ -6,7 +6,8 @@
 
 struct _Person;
 typedef struct _Person* Position;
-typedef struct _Person {
+typedef struct _Person
+{
     char name[MAX_SIZE];
     char surname[MAX_SIZE];
     int birthYear;
@@ -23,10 +24,11 @@ Position FindLast(Position head);
 int AppendList(Position head, char* name, char* surname, int birthYear);
 Position FindPerson(Position first, char* surname);
 int DeletePerson(Position head, char* surname);
+int AddAfter(Position p, char* name, char* surname, int birthYear);
 
 int main(int argc, char** argv)
 {
-    Person head={.next=NULL,.name={0},.surname={0},.birthYear=0};
+    Person head= {.next=NULL,.name={0},.surname={0},.birthYear=0};
 
     Position p=&head;
 
@@ -45,11 +47,12 @@ void Menu(Position p)
     char surnameInput[MAX_SIZE]="";
     Position searchPosition=NULL;
 
-    do {
+    do
+    {
         printf("Unosom broja odaberite zelite li:\n1. Dodati novi element na pocetak liste\n"
                "2. Ispisati listu\n3. Dodati novi element na kraj liste\n"
                "4. Pronaci element u listi (po prezimenu)\n5. Izbrisati odredeni element iz liste(po prezimenu)\n"
-               "0. Izaci iz programa\n");
+               "6. Dodati novi element iza odredenog elementa(birate iza kojeg unosom prezimena)\n0. Izaci iz programa\n");
         scanf(" %c", &option);
 
         switch (option)
@@ -59,7 +62,7 @@ void Menu(Position p)
             error= PrependList(p, name, surname, birthYear);
             if (error== -1)
             {
-                 printf("Neuspjesno dodavanje osobe!\n");
+                printf("Neuspjesno dodavanje osobe!\n");
 
 
             }
@@ -102,7 +105,7 @@ void Menu(Position p)
             break;
 
         case '5':
-          if (p->next==NULL)
+            if (p->next==NULL)
             {
                 printf("Prazna lista\n");
                 break;
@@ -111,6 +114,11 @@ void Menu(Position p)
             scanf(" %s", surnameInput);
             DeletePerson(p, surnameInput);
             break;
+        case '6':
+            InputInfo(name, surname, &birthYear);
+            AddAfter(p, name, surname, birthYear);
+            break;
+
 
         case '0':
             break;
@@ -119,7 +127,8 @@ void Menu(Position p)
             break;
 
         }
-    } while(option != '0');
+    }
+    while(option != '0');
 
 }
 
@@ -264,4 +273,30 @@ int DeletePerson(Position head, char* surname)
     }
 
     return 0;
+}
+int AddAfter(Position head, char* name, char* surname, int birthYear)
+{
+    Position newPerson=NULL,searchPosition=NULL;
+    char surnameInput[MAX_SIZE]="";
+
+    newPerson=CreatePerson(name, surname, birthYear);
+    if (!newPerson)
+    {
+        printf("Neuspjela dinamicka alokacija");
+        return -1;
+    }
+     if (head->next==NULL)
+    {
+        printf("Prazna lista\n");
+        return -1;
+    }
+
+    printf("Unesite prezime: ");
+    scanf(" %s", surnameInput);
+    searchPosition=FindPerson(head->next, surnameInput);
+
+
+    InsertAfter(searchPosition, newPerson);
+
+    return EXIT_SUCCESS;
 }
