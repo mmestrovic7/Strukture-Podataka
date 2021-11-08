@@ -6,12 +6,14 @@
 #include "Polynomial.h"
 int main()
 {
-    Polynomial head1={.coefficient=0,.exponent=0,.next=NULL};
-    Polynomial head2={.coefficient=0,.exponent=0,.next=NULL};
-    Polynomial resultPoly={.coefficient=0,.exponent=0,.next=NULL};
+    Polynomial head1= {.coefficient=0,.exponent=0,.next=NULL};
+    Polynomial head2= {.coefficient=0,.exponent=0,.next=NULL};
+    Polynomial resultPoly1= {.coefficient=0,.exponent=0,.next=NULL};
+    Polynomial resultPoly2= {.coefficient=0,.exponent=0,.next=NULL};
     Position p1=&head1;
     Position p2=&head2;
-    Position p3=&resultPoly;
+    Position p3=&resultPoly1;
+    Position p4=&resultPoly2;
     if(ReadFile("polynomial.txt",p1,p2)!=EXIT_SUCCESS)
         return EXIT_FAILURE;
     PrintPoly("First polynomial: ",p1);
@@ -19,6 +21,9 @@ int main()
     if(AddPoly(p3,p1,p2)!=EXIT_SUCCESS)
         return EXIT_FAILURE;
     PrintPoly("Result of addition: ",p3);
+    if(MultiplyPoly(p4,p1,p2)!=EXIT_SUCCESS)
+        return EXIT_FAILURE;
+    PrintPoly("Result of multiplication: ",p4);
 
 
     return EXIT_SUCCESS;
@@ -56,45 +61,45 @@ int ReadFile(char *fileName, Position head1, Position head2)
 int ParseStringToList(char *buffer,Position head)
 {
     char *currentBuffer=buffer;
-	int coefficient=0;
-	int exponent=0;
-	int numBytes=0;
-	int status=0;
-	Position newElement=NULL;
-
-	while (strlen(currentBuffer)>0)
-	{
-		status=sscanf(currentBuffer, " %d %d %n", &coefficient, &exponent, &numBytes);
-
-
-		if (status!=2)
-		{
-			printf("This file is not good!\n");
-			return EXIT_FAILURE;
-		}
+    int coefficient=0;
+    int exponent=0;
+    int numBytes=0;
+    int status=0;
+    Position newElement=NULL;
+    while (strlen(currentBuffer)>0)
+    {
+        status=sscanf(currentBuffer, " %d %d %n", &coefficient, &exponent, &numBytes);
+        if (status!=2)
+        {
+            printf("Invalid coefficient/exponent!\n");
+            return EXIT_FAILURE;
+        }
 
 
-		newElement=CreateElement(coefficient, exponent);
+        newElement=CreateElement(coefficient, exponent);
 
-		if (!newElement)
-		{
-			return EXIT_FAILURE;
-		}
+        if (!newElement)
+        {
+            return EXIT_FAILURE;
+        }
 
 
-		InsertSorted(head, newElement);
+        InsertSorted(head, newElement);
+        currentBuffer+=numBytes;
+    }
 
-		currentBuffer+=numBytes;
-	}
-
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 Position CreateElement(int coefficient,int exponent)
 {
     Position newElement=NULL;
     newElement=(Position)malloc(sizeof(Polynomial));
     if (!newElement)
+    {
+        printf("Unsuccessful memory allocation\n");
         return newElement;
+    }
+
     newElement->coefficient=coefficient;
     newElement->exponent=exponent;
     return newElement;
@@ -103,35 +108,30 @@ Position CreateElement(int coefficient,int exponent)
 int InsertSorted(Position head,Position newElement)
 {
     Position temp=head;
-    if(temp->next==NULL)
+    if(newElement->coefficient!=0)
     {
-
-        return InsertAfter(temp,newElement);
-    }
-
-    while(temp)
-    {
-
-        if(temp->next->exponent<newElement->exponent)
+        if(temp->next==NULL)
             return InsertAfter(temp,newElement);
-        if(temp->next->exponent==newElement->exponent)
-        {
-            if(temp->next->coefficient==-(newElement->coefficient))
-                return DeleteAfter(temp);
-            temp->next->coefficient+=newElement->coefficient;
-            return EXIT_SUCCESS;
-
-        }
-        if((temp->next->next==NULL)&&(temp->next->exponent>newElement->exponent))
+        while(temp)
         {
 
-            return InsertAfter(temp->next,newElement);
-        }
+            if(temp->next->exponent<newElement->exponent)
+                return InsertAfter(temp,newElement);
+            if(temp->next->exponent==newElement->exponent)
+            {
+                if(temp->next->coefficient==-(newElement->coefficient))
+                    return DeleteAfter(temp);
+                temp->next->coefficient+=newElement->coefficient;
+                return EXIT_SUCCESS;
 
-        temp=temp->next;
+            }
+            if((temp->next->next==NULL)&&(temp->next->exponent>newElement->exponent))
+                return InsertAfter(temp->next,newElement);
+
+            temp=temp->next;
+        }
     }
-
-
+   return EXIT_SUCCESS;
 }
 int InsertAfter(Position head,Position newElement)
 {
@@ -156,10 +156,7 @@ int AddPoly(Position resultPoly,Position head1,Position head2)
     {
         newElement=CreateElement(head1->coefficient,head1->exponent);
         if (!newElement)
-        {
-            printf("Failure while creating an element\n");
             return EXIT_FAILURE;
-        }
         InsertSorted(resultPoly, newElement);
         head1=head1->next;
 
@@ -168,10 +165,7 @@ int AddPoly(Position resultPoly,Position head1,Position head2)
     {
         newElement=CreateElement(head2->coefficient,head2->exponent);
         if (!newElement)
-        {
-            printf("Failure while creating an element\n");
             return EXIT_FAILURE;
-        }
         InsertSorted(resultPoly, newElement);
         head2=head2->next;
 
@@ -179,15 +173,44 @@ int AddPoly(Position resultPoly,Position head1,Position head2)
     return EXIT_SUCCESS;
 
 }
+int MultiplyPoly(Position resultPoly,Position head1,Position head2)
+{
+    int coefficient=0,exponent=0;;
+    Position i=NULL,j=NULL;
+    Position newElement=NULL;
+    if(head1->next==NULL||head2->next==NULL)
+        return EXIT_SUCCESS;
+    for(i=head1->next; i; i=i->next)
+        for(j=head2->next; j; j=j->next)
+        {
+            coefficient=i->coefficient*j->coefficient;
+            exponent=i->exponent+j->exponent;
+            newElement=CreateElement(coefficient, exponent);
+
+            if (!newElement)
+            {
+                return EXIT_FAILURE;
+            }
+            InsertSorted(resultPoly, newElement);
+
+        }
+    return EXIT_SUCCESS;
+
+}
 void PrintPoly(char *print,Position poly)
 {
-    printf("%s",print);
     Position i=NULL;
+    printf("%s",print);
     if(poly->next==NULL)
         printf("0");
-    for(i=poly->next;i!=NULL;i=i->next)
+    for(i=poly->next; i!=NULL; i=i->next)
     {
-        printf("%dx^%d",i->coefficient,i->exponent);
+        if(i->exponent<0)
+            printf("%dx^(%d)",i->coefficient,i->exponent);
+        else if(i->exponent==0)
+            printf("%d",i->coefficient);
+        else
+            printf("%dx^%d",i->coefficient,i->exponent);
         if(i->next!=NULL)
             printf(" + ");
     }
@@ -195,5 +218,3 @@ void PrintPoly(char *print,Position poly)
 
 
 }
-
-

@@ -19,6 +19,7 @@ int InsertAfter(Position head,Position newElement);
 int DeleteAfter(Position previousElement);
 int AddPoly(Position resultPoly,Position head1,Position head2);
 void PrintPoly(char *print,Position poly);
+int MultiplyPoly(Position resultPoly,Position head1,Position head2);
 
 
 #endif
