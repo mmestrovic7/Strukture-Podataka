@@ -41,12 +41,14 @@ int ReadFile(char *fileName, Position head1, Position head2)
         return -1;
     }
     fgets(buffer,MAX_LINE,file);
+
     status=ParseStringToList(buffer,head1);
     if (status!=EXIT_SUCCESS)
     {
         return EXIT_FAILURE;
     }
     fgets(buffer, MAX_LINE, file);
+
     status=ParseStringToList(buffer,head2);
     if (status!=EXIT_SUCCESS)
     {
@@ -205,12 +207,12 @@ void PrintPoly(char *print,Position poly)
         printf("0");
     for(i=poly->next; i!=NULL; i=i->next)
     {
-        if(i->exponent<0)
-            printf("%dx^(%d)",i->coefficient,i->exponent);
-        else if(i->exponent==0)
+        if(i->coefficient!=1||i->exponent==0)
             printf("%d",i->coefficient);
-        else
-            printf("%dx^%d",i->coefficient,i->exponent);
+        if(i->exponent<0)
+            printf("x^(%d)",i->exponent);
+        if(i->exponent>0)
+            printf("x^%d",i->exponent);
         if(i->next!=NULL)
             printf(" + ");
     }
