@@ -133,7 +133,7 @@ int InsertSorted(Position head,Position newElement)
             temp=temp->next;
         }
     }
-   return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 int InsertAfter(Position head,Position newElement)
 {
@@ -208,7 +208,10 @@ void PrintPoly(char *print,Position poly)
     for(i=poly->next; i!=NULL; i=i->next)
     {
         if(i->coefficient!=1||i->exponent==0)
-            printf("%d",i->coefficient);
+            if(i->coefficient>0)
+                printf("%d",i->coefficient);
+            else
+                printf("(%d)",i->coefficient);
         if(i->exponent<0)
             printf("x^(%d)",i->exponent);
         if(i->exponent>0)
