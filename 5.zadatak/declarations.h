@@ -14,5 +14,6 @@ int Pop(Position head, double* result);
 int ParseStringIntoPostfixAndCalculatePostfix(char* fileName,double* result);
 int PopAndPerformOperation(Position head,char operation, double* result);
 int CheckStackAndExtractResult(Position head, double* result);
+int PrintStack(Position head);
 
 #endif

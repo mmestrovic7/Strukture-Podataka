@@ -48,6 +48,7 @@ int InsertAfter(Position head, Position newElement)
 {
     newElement->next=head->next;
     head->next=newElement;
+    PrintStack(head->next);
     return EXIT_SUCCESS;
 }
 int Push(Position head,double number)
@@ -88,7 +89,7 @@ int ParseStringIntoPostfixAndCalculatePostfix(char* fileName,double* result)
         return EXIT_FAILURE;
     for(currentBuffer=buffer;strlen(currentBuffer)>0;currentBuffer+=numBytes)
     {
-        status=sscanf(" %lf %n",&number,&numBytes);
+        status=sscanf(currentBuffer," %lf %n",&number,&numBytes);
         if(status!=1)
         {
             sscanf(currentBuffer," %c %n",&operation,&numBytes);
@@ -147,6 +148,19 @@ int CheckStackAndExtractResult(Position head, double* result)
         printf("Invalid postfix, please check the file!\r\n");
         return EXIT_FAILURE;
     }
+
+    return EXIT_SUCCESS;
+}
+int PrintStack(Position head)
+{
+    Position temp=head;
+
+    while(temp)
+    {
+        printf("%0.1lf", temp->number);
+        temp=temp->next;
+    }
+    printf("\n");
 
     return EXIT_SUCCESS;
 }

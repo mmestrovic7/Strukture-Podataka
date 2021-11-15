@@ -10,6 +10,7 @@ int main(int argc, char* argv[])
     double result=0.0;
     if(ParseStringIntoPostfixAndCalculatePostfix("postfix.txt",&result)!=EXIT_SUCCESS)
         return EXIT_FAILURE;
-    printf("%lf ",result);
+    printf("Result: %lf\n",result);
+    return EXIT_SUCCES;
 
 }
