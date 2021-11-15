@@ -80,7 +80,7 @@ int ParseStringIntoPostfixAndCalculatePostfix(char* fileName,double* result)
 {
     Number head={.number=0,.next=NULL};
 
-    char* buffer=NULL,currentBuffer=NULL;
+    char *buffer=NULL,*currentBuffer=NULL;
     double number=0.0;
     int numBytes=0,status=0;
     char operation='\0';
@@ -157,7 +157,7 @@ int PrintStack(Position head)
 
     while(temp)
     {
-        printf("%0.1lf", temp->number);
+        printf("%.2lf ", temp->number);
         temp=temp->next;
     }
     printf("\n");
