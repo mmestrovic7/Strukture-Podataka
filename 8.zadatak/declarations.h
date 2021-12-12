@@ -4,7 +4,7 @@ struct treeNode;
 typedef struct treeNode* Position;
 struct treeNode
 {
-	int data;
+    int data;
 	Position left;
 	Position right;
 };

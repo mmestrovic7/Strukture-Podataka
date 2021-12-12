@@ -29,6 +29,5 @@ int main()
             printf("Invalid input, please input either y or n!\n");
     }while(option!='n');
     LevelTracking(root);
-
-
+    return 0;
 }
