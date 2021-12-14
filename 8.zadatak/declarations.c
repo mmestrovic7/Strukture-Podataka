@@ -41,9 +41,40 @@ int PrintLevel(Position root,int level)
     return left||right;
 }
 
-void LevelTracking(Position root)
+int LevelTracking(Position root)
 {
     int level=1;
     while (PrintLevel(root, level))
         level++;
+    return 0;
+}
+int InOrderPrint(Position root)
+{
+	if (root)
+	{
+		InOrderPrint(root->left);
+		printf("%d ", root->data);
+		InOrderPrint(root->right);
+	}
+	return 0;
+}
+int PreOrderPrint(Position root)
+{
+	if (root)
+	{
+	    printf("%d ", root->data);
+		PreOrderPrint(root->left);
+		PreOrderPrint(root->right);
+	}
+    return 0;
+}
+int PostOrderPrint(Position root)
+{
+	if (root)
+	{
+	    PostOrderPrint(root->left);
+		PostOrderPrint(root->right);
+		printf("%d", root->data);
+	}
+    return 0;
 }

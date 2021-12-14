@@ -11,5 +11,9 @@ struct treeNode
 Position InsertElement(Position root,int val);
 Position CreateNewElement(int val);
 int PrintLevel(Position root,int level);
-void LevelTracking(Position root);
+int LevelTracking(Position root);
+int InOrderPrint(Position root);
+int PreOrderPrint(Position root);
+int PostOrderPrint(Position root);
+
 #endif

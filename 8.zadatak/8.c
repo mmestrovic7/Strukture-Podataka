@@ -7,7 +7,7 @@
 int main()
 {
     int number=0;
-    char option='\0',trash='\0';
+    char option='\0',trash[1024];
     Position root=NULL;
     do
     {
@@ -20,7 +20,7 @@ int main()
             if(scanf(" %d",&number)!=1)
             {
                 printf("That's not a number!\n");
-                scanf(" %c",&trash);
+                scanf(" %s",&trash);
                 }
             else
             root=InsertElement(root,number);
@@ -28,6 +28,7 @@ int main()
         if(option!='y'&&option!='n')
             printf("Invalid input, please input either y or n!\n");
     }while(option!='n');
-    LevelTracking(root);
+    PreOrderPrint(root);
+
     return 0;
 }
