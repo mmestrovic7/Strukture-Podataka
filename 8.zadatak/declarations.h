@@ -18,6 +18,9 @@ int PostOrderPrint(Position root);
 Position FindElement(int val,Position root);
 int Menu(Position root);
 int GetNumber();
+Position DeleteElement(int val, Position root);
+Position FindMin(Position root);
+
 
 
 #endif

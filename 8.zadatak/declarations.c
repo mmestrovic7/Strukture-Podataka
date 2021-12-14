@@ -16,7 +16,7 @@ Position InsertElement(Position root,int val)
 Position CreateNewElement(int val)
 {
     Position newNode=(Position)malloc(sizeof(struct treeNode));
-    if (!newNode)
+    if(!newNode)
     {
         printf("Unsuccesful memory allocation!\n");
         return newNode;
@@ -31,7 +31,7 @@ int PrintLevel(Position root,int level)
     int left=0,right=0;
     if(root==NULL)
         return 0;
-    if (level==1)
+    if(level==1)
     {
         printf("%d\n",root->data);
         return 1;
@@ -49,7 +49,7 @@ int LevelOrderPrint(Position root)
 }
 int InOrderPrint(Position root)
 {
-    if (root)
+    if(root)
     {
         InOrderPrint(root->left);
         printf("%d\n", root->data);
@@ -59,7 +59,7 @@ int InOrderPrint(Position root)
 }
 int PreOrderPrint(Position root)
 {
-    if (root)
+    if(root)
     {
         printf("%d\n", root->data);
         PreOrderPrint(root->left);
@@ -69,7 +69,7 @@ int PreOrderPrint(Position root)
 }
 int PostOrderPrint(Position root)
 {
-    if (root)
+    if(root)
     {
         PostOrderPrint(root->left);
         PostOrderPrint(root->right);
@@ -79,11 +79,11 @@ int PostOrderPrint(Position root)
 }
 Position FindElement(int val,Position root)
 {
-    if (!root)
+    if(!root)
         return root;
-    else if (val<root->data)
+    else if(val<root->data)
         return FindElement(val,root->left);
-    else if (val>root->data)
+    else if(val>root->data)
         return FindElement(val,root->right);
     else
         return root;
@@ -103,6 +103,7 @@ int Menu(Position root)
                "4)Postorder printing\n"
                "5)Level order printing\n"
                "6)Find an element(number)\n"
+               "7)Delete an element(number)\n"
                "8)Clear screen(except menu)\n"
                "X)Exit\n");
         printf("Input a character: ");
@@ -135,9 +136,15 @@ int Menu(Position root)
             number=GetNumber();
             element=FindElement(number,root);
             if(element)
-                printf("Element is found. The adress of the element:",element);
+                printf("Element is found. The adress of the element:%d\n",element);
+            else
+                printf("Element is not found.\n");
             break;
         case '7':
+            number=GetNumber();
+            element=DeleteElement(number,root);
+            break;
+        case '8':
             system("cls");
             break;
         case 'x':
@@ -169,4 +176,39 @@ int GetNumber()
         else
             return number;
     }
+}
+Position DeleteElement(int val, Position root)
+{
+	Position temp;
+	if(!root)
+		return root;
+	else if(val<root->data)
+		root->left=DeleteElement(val,root->left);
+	else if(val>root->data)
+		root->right=DeleteElement(val,root->right);
+	else
+	{
+		if(root->left&&root->right)
+		{
+			temp=FindMin(root->right);
+			root->data=temp->data;
+			root->right=DeleteElement(temp->data,root->right);
+		}
+		else
+		{
+			temp=root;
+			if(!root->left)
+				root=root->right;
+			else if(!root->right)
+				root=root->left;
+			free(temp);
+		}
+	}
+	return root;
+}
+Position FindMin(Position root)
+{
+	while (root->left)
+		root=root->left;
+	return root;
 }
