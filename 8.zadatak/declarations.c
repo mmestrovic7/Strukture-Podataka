@@ -179,7 +179,7 @@ int GetNumber()
 }
 Position DeleteElement(int val, Position root)
 {
-	Position temp;
+	Position temp=NULL;
 	if(!root)
 		return root;
 	else if(val<root->data)
