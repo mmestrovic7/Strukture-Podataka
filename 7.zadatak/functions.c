@@ -9,9 +9,11 @@ int InputHandle(Position head)
 {
     int exitVar=1;
     Position current=head;
+    Position temphead=head;
     char userInput[MAX_LINE],command[6],directoryName[MAX_LINE];
     do
     {
+        temphead=head;
         InitialPrint(head,current);
         fgets(userInput,MAX_LINE,stdin);
         sscanf(userInput,"%s %s",command,directoryName);
@@ -24,6 +26,17 @@ int InputHandle(Position head)
             Dir(current);
         else if(!strcmp("md",command))
             MakeDir(directoryName,current);
+        else if(!strcmp("cd",command))
+            if(ChangeDirectory(directoryName,current,temphead))
+                printf("The directory doesnt exist\n");
+        else if(!strcmp("cd dir",command))
+        {
+            if(ChangeDirectory(directoryName,current,temphead))
+                printf("The directory doesnt exist\n");
+            Dir(current);
+        }
+
+
 
 
     }while(exitVar);
@@ -89,6 +102,7 @@ int InitialPrint(Position head,Position current)
 }
 int MakeDir(char* name, Position current)
 {
+    Position temp=current;
     Position newDirectory=CreateElement(name);
     if(!newDirectory)
         return -1;
@@ -97,8 +111,27 @@ int MakeDir(char* name, Position current)
         current->child=newDirectory;
         return 0;
     }
-    while(current->child->sibling)
-        current=current->sibling;
-    current->child->sibling=newDirectory;
+    temp=current->child;
+    while(temp->sibling)
+        temp=temp->sibling;
+    temp->sibling=newDirectory;
     return 0;
 }
+int ChangeDirectory(char* name,Position current,Position temphead)
+{
+    if(!strcpy(temphead,name))
+    {
+        current=temphead;
+        return 0;
+    }
+
+
+    if(temphead->child)
+        if(!ChangeDirectory(name,current,temphead->child))
+            return 0;
+    if(temphead->sibling)
+        if(!ChangeDirectory(name,current,temphead->sibling))
+            return 0;
+    return 1;
+}
+
