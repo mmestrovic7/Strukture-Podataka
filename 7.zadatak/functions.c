@@ -119,7 +119,7 @@ int MakeDir(char* name, Position current)
 }
 int ChangeDirectory(char* name,Position current,Position temphead)
 {
-    if(!strcpy(temphead,name))
+    if(!strcpy(temphead->name,name))
     {
         current=temphead;
         return 0;
