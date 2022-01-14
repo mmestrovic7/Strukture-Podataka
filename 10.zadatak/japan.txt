@@ -1,0 +1,3 @@
+Tokyo 8489653
+Yokohama 3579628
+Osaka 2628811
