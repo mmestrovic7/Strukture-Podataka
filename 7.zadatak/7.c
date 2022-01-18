@@ -6,10 +6,8 @@
 #include "functions.c"
 int main()
 {
-    Position head=CreateElement("C:");
-    if(!head)
-        return -1;
-    InputHandle(head);
+    _Directory head={.name="C:",.child=NULL,.sibling=NULL};
+    InputHandle(&head);
 
     return 0;
 }

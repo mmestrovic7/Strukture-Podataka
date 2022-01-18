@@ -8,13 +8,14 @@
 int InputHandle(Position head)
 {
     int exitVar=1;
-    Position current=head;
+    Position current=head,tempcurrent=NULL;
     Position temphead=head;
     char userInput[MAX_LINE],command[6],directoryName[MAX_LINE];
+    _List pathHead={.name="",.next=NULL};
     do
     {
         temphead=head;
-        InitialPrint(head,current);
+        InitialPrint(&pathHead);
         fgets(userInput,MAX_LINE,stdin);
         sscanf(userInput,"%s %s",command,directoryName);
         if(!strcmp("exit",command))
@@ -27,13 +28,28 @@ int InputHandle(Position head)
         else if(!strcmp("md",command))
             MakeDir(directoryName,current);
         else if(!strcmp("cd",command))
-            if(ChangeDirectory(directoryName,current,temphead))
+        {
+
+            tempcurrent=ChangeDirectory(directoryName,temphead,&pathHead);
+            if(!tempcurrent)
                 printf("The directory doesnt exist\n");
+            else
+                current=tempcurrent;
+
+
+        }
+
         else if(!strcmp("cd dir",command))
         {
-            if(ChangeDirectory(directoryName,current,temphead))
+            tempcurrent=ChangeDirectory(directoryName,temphead,&pathHead);
+            if(!tempcurrent)
                 printf("The directory doesnt exist\n");
-            Dir(current);
+            else
+            {
+                current=tempcurrent;
+                Dir(current);
+            }
+
         }
 
 
@@ -54,6 +70,19 @@ Position CreateElement(char* name)
     strcpy(newElement->name,name);
     newElement->child=NULL;
     newElement->sibling=NULL;
+
+}
+PositionList CreateListElement(char* name)
+{
+    PositionList newElement=NULL;
+    newElement=(PositionList)malloc(sizeof(_List));
+    if(!newElement)
+    {
+        printf("Couldn't allocate memory!");
+        return newElement;
+    }
+    strcpy(newElement->name,name);
+    newElement->next=NULL;
 
 }
 Position Exit(Position current)
@@ -87,16 +116,18 @@ int Dir(Position current)
 
    return 0;
 }
-int InitialPrint(Position head,Position current)
+int InitialPrint(PositionList path)
 {
-        Position temp=head;
-        printf("%s",head->name);
-        while(temp!=head)
+       if(path->next==NULL)
+        printf("C:");
+        while(path->next)
         {
-            printf("\\");
-            printf("%s",temp->name);
-            temp=temp->child;
+            path=path->next;
+            //printf("\\");
+            printf(" %s ",path->name);
+
         }
+
         printf(">");
         return 0;
 }
@@ -117,21 +148,36 @@ int MakeDir(char* name, Position current)
     temp->sibling=newDirectory;
     return 0;
 }
-int ChangeDirectory(char* name,Position current,Position temphead)
+Position ChangeDirectory(char* name,Position temphead,PositionList path)
 {
-    if(!strcpy(temphead->name,name))
+    Position current=NULL;
+    if(!strcmp(temphead->name,name))
     {
-        current=temphead;
-        return 0;
+        if(InsertAfter(path,temphead->name)==-1)
+                return NULL;
+        return temphead;
     }
 
 
     if(temphead->child)
-        if(!ChangeDirectory(name,current,temphead->child))
-            return 0;
-    if(temphead->sibling)
-        if(!ChangeDirectory(name,current,temphead->sibling))
-            return 0;
-    return 1;
-}
+        if((current=ChangeDirectory(name,temphead->child,path))!=NULL)
+        {
+            if(InsertAfter(path,temphead->name)==-1)
+                return NULL;
+            return current;
+        }
 
+    if(temphead->sibling)
+        if((current=ChangeDirectory(name,temphead->sibling,path))!=NULL)
+            return current;
+    return NULL;
+}
+int InsertAfter(PositionList head, char* name)
+{
+    PositionList newElement=CreateListElement(name);
+    if(!newElement)
+        return -1;
+    newElement->next=head->next;
+    head->next=newElement;
+    return 0;
+}

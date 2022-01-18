@@ -5,6 +5,7 @@
 struct Directory;
 struct List;
 typedef struct Directory* Position;
+typedef struct List* PositionList;
 typedef struct Directory
 {
     char name[MAX_LINE];
@@ -14,15 +15,16 @@ typedef struct Directory
 typedef struct List
 {
     char name[MAX_LINE];
-    Position next;
+    PositionList next;
 }_List;
 int InputHandle(Position head);
 Position CreateElement(char* name);
 Position Exit(Position current);
-int InitialPrint(Position head,Position current);
+int InitialPrint(PositionList path);
 int Dir(Position current);
 int MakeDir(char* name, Position current);
-int ChangeDirectory(char* name,Position current,Position temphead);
+Position ChangeDirectory(char* name,Position temphead,PositionList path);
+int InsertAfter(PositionList head, char* name);
 
 #endif
 
