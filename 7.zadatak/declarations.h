@@ -20,11 +20,12 @@ typedef struct List
 int InputHandle(Position head);
 Position CreateElement(char* name);
 Position Exit(Position current);
-int InitialPrint(PositionList path);
+int InitialPrint(PositionList path,PositionList current);
 int Dir(Position current);
 int MakeDir(char* name, Position current);
 Position ChangeDirectory(char* name,Position temphead,PositionList path);
 int InsertAfter(PositionList head, char* name);
+//PositionList DeleteList(PositionList current);
 
 #endif
 

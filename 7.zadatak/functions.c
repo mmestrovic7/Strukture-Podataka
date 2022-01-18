@@ -11,11 +11,12 @@ int InputHandle(Position head)
     Position current=head,tempcurrent=NULL;
     Position temphead=head;
     char userInput[MAX_LINE],command[6],directoryName[MAX_LINE];
-    _List pathHead={.name="",.next=NULL};
+    _List pathHead= {.name="",.next=NULL};
+    PositionList path=&pathHead;
     do
     {
         temphead=head;
-        InitialPrint(&pathHead);
+        InitialPrint(&pathHead,current);
         fgets(userInput,MAX_LINE,stdin);
         sscanf(userInput,"%s %s",command,directoryName);
         if(!strcmp("exit",command))
@@ -36,7 +37,6 @@ int InputHandle(Position head)
             else
                 current=tempcurrent;
 
-
         }
 
         else if(!strcmp("cd dir",command))
@@ -55,7 +55,8 @@ int InputHandle(Position head)
 
 
 
-    }while(exitVar);
+    }
+    while(exitVar);
     return 0;
 }
 Position CreateElement(char* name)
@@ -114,22 +115,25 @@ int Dir(Position current)
         temp=temp->sibling;
     }
 
-   return 0;
+    return 0;
 }
-int InitialPrint(PositionList path)
+int InitialPrint(PositionList path,PositionList current)
 {
-       if(path->next==NULL)
+    int end=0;
+    if(path->next==NULL)
         printf("C:");
-        while(path->next)
-        {
-            path=path->next;
-            //printf("\\");
-            printf(" %s ",path->name);
+    while(path->next&&!end)
+    {
+        path=path->next;
+        if(strcmp("C:",path->name))
+            printf("\\");
+        printf("%s",path->name);
+        if(!strcmp(path->name,current->name))
+            end=1;
+    }
 
-        }
-
-        printf(">");
-        return 0;
+    printf(">");
+    return 0;
 }
 int MakeDir(char* name, Position current)
 {
@@ -154,7 +158,7 @@ Position ChangeDirectory(char* name,Position temphead,PositionList path)
     if(!strcmp(temphead->name,name))
     {
         if(InsertAfter(path,temphead->name)==-1)
-                return NULL;
+            return NULL;
         return temphead;
     }
 
@@ -181,3 +185,4 @@ int InsertAfter(PositionList head, char* name)
     head->next=newElement;
     return 0;
 }
+
